@@ -1,0 +1,44 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+
+[[mods]]
+modId="modbedwarsmanager"
+version="1.0.0"
+displayName="JDO BEDWARS MANAGER"
+updateJSONURL="https://example.com/update.json"
+displayURL="https://example.com"
+logoFile="logo.png"
+credits="Thanks to the Minecraft Forge team!"
+authors="JDO"
+description='''
+Mob created by JDO for custom spawn and custom ia of mobs during game
+'''
+
+[[dependencies.modbedwarsmanager]]
+modId="forge"
+mandatory=true
+versionRange="[47.4.0,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.modbedwarsmanager]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.20.2)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.modbedwarsmanager]]
+modId="modlicense"
+mandatory=true
+versionRange="[1.0.0,)"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.modbedwarsmanager]]
+modId="modmobspawniacontroller"
+mandatory=true
+versionRange="[1.0.0,)"
+ordering="AFTER"
+side="BOTH"
