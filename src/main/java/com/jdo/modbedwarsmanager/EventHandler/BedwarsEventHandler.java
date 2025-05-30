@@ -14,13 +14,18 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Creeper;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
+import net.minecraftforge.event.entity.EntityJoinLevelEvent;
+import net.minecraftforge.event.entity.living.LivingDropsEvent;
+import net.minecraftforge.event.entity.living.LivingExperienceDropEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.event.server.ServerStartingEvent;
@@ -48,10 +53,18 @@ public class BedwarsEventHandler {
         if (server.isSingleplayer() && server.isPublished()) {
             System.out.println("[BedwarsEventHandler] Monde en LAN ouvert !");
         }
+        killAllNonPlayersFromHosterWorld();
     }
 
     @SubscribeEvent
     public static void onServerTick(TickEvent.ServerTickEvent event) {
+        if (event.phase == TickEvent.Phase.START) {
+            for (ServerLevel level : event.getServer().getAllLevels()) {
+                level.setDayTime(6000);
+                level.setWeatherParameters(0, 0, false, false);
+            }
+        }
+
         if (event.phase != TickEvent.Phase.END) return;
 
         MinecraftServer server = ServerLifecycleHooks.getCurrentServer();
@@ -64,6 +77,14 @@ public class BedwarsEventHandler {
         }
 
         wasLanOpen = isLanNow;
+    }
+
+    @SubscribeEvent
+    public static void onPlayerJoin(net.minecraftforge.event.entity.player.PlayerEvent.PlayerLoggedInEvent event) {
+        if (Hoster == null && event.getEntity() instanceof ServerPlayer player) {
+            Hoster = player;
+            LOGGER.info("Hoster assigned: " + player.getGameProfile().getName());
+        }
     }
 
     @SubscribeEvent
@@ -115,6 +136,7 @@ public class BedwarsEventHandler {
                 event.setCanceled(true);
             }
         } else {
+            ModBedwarsManager.LOGGER.info("event setCanceled: true");
             event.setCanceled(true);
         }
     }
@@ -196,5 +218,31 @@ public class BedwarsEventHandler {
         return x >= 5 && x <= 6
                 && y == 209
                 && z >= -13 && z <= -12;
+    }
+
+    @SubscribeEvent
+    public static void onMobExperienceDrop(LivingExperienceDropEvent event) {
+        event.setDroppedExperience(0);
+    }
+
+    @SubscribeEvent
+    public static void onEntityDrop(LivingDropsEvent event) {
+        event.setCanceled(true);
+    }
+
+    @SubscribeEvent
+    public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
+        if (event.getEntity() instanceof Player) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public static void onEntityJoin(EntityJoinLevelEvent event) {
+        if (event.getEntity() instanceof Mob mob) {
+            if (!mob.isPersistenceRequired() && !event.loadedFromDisk()) {
+                event.setCanceled(true);
+            }
+        }
     }
 }

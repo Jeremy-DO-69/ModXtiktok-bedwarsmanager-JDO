@@ -4,7 +4,7 @@
   "package": "com.jdo.modbedwarsmanager.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
-    "BlockMixin",
+    "BlockDropBlockMixin",
     "LevelMixin"
   ],
   "client": [],

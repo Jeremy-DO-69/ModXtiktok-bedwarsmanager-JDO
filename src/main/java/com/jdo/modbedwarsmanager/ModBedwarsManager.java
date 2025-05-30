@@ -1,5 +1,7 @@
 package com.jdo.modbedwarsmanager;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDropsEvent;
@@ -8,7 +10,6 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.util.Set;
 
 
@@ -74,17 +75,17 @@ public class ModBedwarsManager {
 
     public static boolean verified = false;
     public  static Mode currentMode = Mode.NOTHING;
-
-    public static Player Player1;
-    public static Player Player2;
-
+    public static boolean replacingArena = false;
+    public static Player Player1 = null;;
+    public static Player Player2 = null;;
+    public static Player Hoster = null;
     public static final String MODID = "modbedwarsmanager";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
 
     public enum Mode {
         NOTHING,
         SOLO,
-        MULTI,
+        MULTI
     }
 
     public ModBedwarsManager() {
@@ -93,7 +94,6 @@ public class ModBedwarsManager {
     }
 
     public static boolean isBlockAllowed(String id, Set<String> blockList) {
-        System.out.println("is block allowed : " + id + blockList.contains(id));
         return blockList.contains(id);
     }
 
@@ -123,6 +123,16 @@ public class ModBedwarsManager {
 
             // Remove player 2 from system
             Player2 = null;
+        }
+        killAllNonPlayersFromHosterWorld();
+    }
+
+    public static void killAllNonPlayersFromHosterWorld() {
+        if (Hoster == null) return;
+
+        ServerLevel level = (ServerLevel) Hoster.level(); // or (ServerLevel) hoster.level()
+        for (Entity entity : level.getEntities(null, e -> !(e instanceof Player))) {
+            entity.discard();
         }
     }
 }
