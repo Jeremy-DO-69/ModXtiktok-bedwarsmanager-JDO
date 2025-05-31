@@ -15,9 +15,6 @@ description='''
 Mob created by JDO for custom spawn and custom ia of mobs during game
 '''
 
-[[mixins]]
-config = "mixins.modbedwarsmanager.json"
-
 [[dependencies.modbedwarsmanager]]
 modId="forge"
 mandatory=true
@@ -31,3 +28,20 @@ mandatory=true
 versionRange="[1.20.1,1.20.2)"
 ordering="NONE"
 side="BOTH"
+
+[[dependencies.modbedwarsmanager]]
+modId="modlicense"
+mandatory=true
+versionRange="[1.0.0,)"
+ordering="AFTER"
+side="BOTH"
+
+[[dependencies.modbedwarsmanager]]
+modId="modmobspawniacontroller"
+mandatory=true
+versionRange="[1.0.0,)"
+ordering="AFTER"
+side="BOTH"
+
+[[mixins]]
+config = "mixins.modbedwarsmanager.json"

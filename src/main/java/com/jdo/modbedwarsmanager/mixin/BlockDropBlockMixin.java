@@ -19,7 +19,7 @@ public class BlockDropBlockMixin {
             cancellable = true
     )
     private static void onPopResource(Level level, BlockPos pos, ItemStack stack, CallbackInfo ci) {
-        LOGGER.warn("Interception: onPopResource ");
-        ci.cancel();
+        //LOGGER.warn("Interception: onPopResource ");
+        //ci.cancel();
     }
 }

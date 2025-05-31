@@ -21,7 +21,6 @@ public class LevelMixin {
         System.out.println("[ModBedwarsManager] LevelMixin has been applied to Level.class");
     }
 
-
     @Inject(method = "setBlock(Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;II)Z",
             at = @At("HEAD"), cancellable = true)
     public void onSetBlock(BlockPos pos, BlockState newState, int flags, int maxUpdateDepth, CallbackInfoReturnable<Boolean> cir) {
@@ -31,19 +30,13 @@ public class LevelMixin {
             Block oldBlock = oldState.getBlock();
             Block newBlock = newState.getBlock();
             ResourceLocation id = BuiltInRegistries.BLOCK.getKey(oldState.getBlock());
-            System.out.println("setBlock 2 called at " + pos + " from " + oldState + " to " + newState + "id : " + id.toString());
-            LOGGER.info("setBlock 2 called at " + pos + " from " + oldState + " to " + newState + "id : " + id.toString());
-
-
             if (!newState.isAir() && newBlock instanceof DoorBlock && oldBlock instanceof DoorBlock) {
                 return;
             }
 
-
             if (!oldState.isAir()) {
                 if (!isBlockAllowed(id.toString(), STATIC_ALLOWED_BLOCKS) &&
                         !isBlockAllowed(id.toString(), STATIC_ALLOWED_BLOCKS_CANNON)) {
-                    LOGGER.warn("Interception: tentative de suppression non autorisée de " + oldBlock + " à " + pos);
                     cir.setReturnValue(false);
                 }
             }
