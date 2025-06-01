@@ -46,6 +46,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
+import static com.jdo.modbedwarsmanager.License.LicenseChecker.isLicenseValid;
 import static com.jdo.modbedwarsmanager.ModBedwarsManager.*;
 import static com.mojang.text2speech.Narrator.LOGGER;
 
@@ -102,12 +103,19 @@ public class BedwarsEventHandler {
         BlockPos pos = event.player.blockPosition();
         if (currentMode == Mode.NOTHING) {
             if (isInZone(pos)) {
+                if (!isLicenseValid(event.player)) {
+                    event.player.displayClientMessage(
+                            Component.literal("Licence non activé ou invalide").withStyle(ChatFormatting.RED),
+                            true
+                    );
+                    return;
+                }
                 currentMode = ModBedwarsManager.Mode.SOLO;
                 Player1 = event.player;
                 Player1.heal(20);
                 StartSoloGame(event);
             }
-        }else {
+        } else {
             if (isInZone(pos)) {
                 event.player.displayClientMessage(
                         Component.literal("Partie en cours").withStyle(style -> style.withColor(0x00FF00)),
@@ -339,31 +347,6 @@ public class BedwarsEventHandler {
         event.setCanceled(true);
     }
 
-   /* @SubscribeEvent
-    public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
-        if (event.getEntity() instanceof Player) {
-            event.setCanceled(true);
-        }
-    }*/
-
-   /* @SubscribeEvent
-    public static void onBlockBreak(BlockEvent.BreakEvent event) {
-        ModBedwarsManager.LOGGER.info("event: " + event);
-        if (event.getPlayer().level().isClientSide()) return;
-        if (!(event.getPlayer() instanceof ServerPlayer)) {
-
-            BlockState state = event.getState();
-            ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
-
-            if (!isBlockAllowed(id.toString(), STATIC_ALLOWED_BLOCKS)) {
-                event.setCanceled(true);
-            }
-        } else {
-            ModBedwarsManager.LOGGER.info("event setCanceled: true");
-            event.setCanceled(true);
-        }
-    }*/
-
     @SubscribeEvent
     public static void onLivingUpdate(LivingEvent.LivingTickEvent event) {
         LivingEntity entity = event.getEntity();
@@ -390,6 +373,31 @@ public class BedwarsEventHandler {
            } else {
                player.teleportTo(SpawnPos.x, SpawnPos.y, SpawnPos.z);
            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onBlockPlace(BlockEvent.EntityPlaceEvent event) {
+        if (event.getEntity() instanceof Player) {
+            event.setCanceled(true);
+        }
+    }
+
+   @SubscribeEvent
+    public static void onBlockBreak(BlockEvent.BreakEvent event) {
+        ModBedwarsManager.LOGGER.info("event: " + event);
+        if (event.getPlayer().level().isClientSide()) return;
+        if (!(event.getPlayer() instanceof ServerPlayer)) {
+
+            BlockState state = event.getState();
+            ResourceLocation id = BuiltInRegistries.BLOCK.getKey(state.getBlock());
+
+            if (!isBlockAllowed(id.toString(), STATIC_ALLOWED_BLOCKS)) {
+                event.setCanceled(true);
+            }
+        } else {
+            ModBedwarsManager.LOGGER.info("event setCanceled: true");
+            event.setCanceled(true);
         }
     }
 }

@@ -1,5 +1,4 @@
 package com.jdo.modbedwarsmanager.mixin;
-import com.jdo.modbedwarsmanager.ModBedwarsManager;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;

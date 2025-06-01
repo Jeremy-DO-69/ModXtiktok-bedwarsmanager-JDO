@@ -27,18 +27,9 @@ public class ArenaUtils {
     //46 38 -75
     //-46 -23 75
     public static void loadSchematic(File file, ServerLevel level, BlockPos origin) {
-        LOGGER.info("loadSchematic");
-        LOGGER.info("Working directory: " + System.getProperty("user.dir"));
         try {
-            LOGGER.info("Trying to load file from: " + file.getAbsolutePath());
-            if (file != null && file.exists()) {
-                LOGGER.info("Le fichier existe !");
-            } else {
-                LOGGER.info("Le fichier est nul ou introuvable !");
-            }
             ClipboardFormat format = ClipboardFormats.findByFile(file);
             if (format == null) {
-                LOGGER.info("Unsupported schematic format: " + file.getName());
                 return;
             }
             ClipboardReader reader = format.getReader(new FileInputStream(file));
@@ -53,11 +44,9 @@ public class ArenaUtils {
                         .to(pasteAt)
                         .ignoreAirBlocks(true)
                         .build());
-                LOGGER.info("✅ Schematic loaded at " + origin);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            LOGGER.info("Error: " + e);
         }
     }
 

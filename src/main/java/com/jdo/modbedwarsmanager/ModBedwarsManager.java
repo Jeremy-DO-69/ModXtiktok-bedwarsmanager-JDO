@@ -195,8 +195,7 @@ public class ModBedwarsManager {
     public static Player Loser = null;
 
     private static final Random random = new Random();
-    public static boolean verified = false;
-    public static boolean replacingArena = true;
+    public static boolean replacingArena = false;
     public static MinecraftServer Server = null;
     public static final String MODID = "modbedwarsmanager";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
@@ -318,16 +317,16 @@ public class ModBedwarsManager {
         helmet.getOrCreateTag().putBoolean("Unbreakable", true);
 
         ItemStack chestplate = new ItemStack(Items.NETHERITE_CHESTPLATE);
-        helmet.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
-        helmet.getOrCreateTag().putBoolean("Unbreakable", true);
+        chestplate.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
+        chestplate.getOrCreateTag().putBoolean("Unbreakable", true);
 
         ItemStack leggings = new ItemStack(Items.NETHERITE_LEGGINGS);
-        helmet.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
-        helmet.getOrCreateTag().putBoolean("Unbreakable", true);
+        leggings.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
+        leggings.getOrCreateTag().putBoolean("Unbreakable", true);
 
         ItemStack boots = new ItemStack(Items.NETHERITE_BOOTS);
-        helmet.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
-        helmet.getOrCreateTag().putBoolean("Unbreakable", true);
+        boots.enchant(Enchantments.ALL_DAMAGE_PROTECTION, 4);
+        boots.getOrCreateTag().putBoolean("Unbreakable", true);
 
         ResourceLocation swordItemId = ResourceLocation.fromNamespaceAndPath("epicfight", "netherite_longsword");
         Item swordModItem = ForgeRegistries.ITEMS.getValue(swordItemId);
@@ -335,6 +334,7 @@ public class ModBedwarsManager {
             ItemStack sword = new ItemStack(swordModItem);
             sword.enchant(Enchantments.SHARPNESS, 3);
             sword.getOrCreateTag().putBoolean("Unbreakable", true);
+            player.getInventory().add(sword);
             player.setItemInHand(InteractionHand.MAIN_HAND, sword);
         }
 
@@ -384,8 +384,16 @@ public class ModBedwarsManager {
         currentWave++;
         currentPhase = GamePhase.WAVE_RUNNING;
 
-        broadcast("Vague " + currentWave + " !", ChatFormatting.GOLD);
-
+        broadcast("Vague " + currentWave + " ! Commence maintenant !", ChatFormatting.GOLD);
+        if (currentMode == Mode.SOLO) {
+            ItemStack enchantedApple = new ItemStack(Items.ENCHANTED_GOLDEN_APPLE);
+            Player1.getInventory().add(enchantedApple);
+        }
+        if (currentMode == Mode.MULTI) {
+            ItemStack enchantedApple = new ItemStack(Items.ENCHANTED_GOLDEN_APPLE);
+            Player1.getInventory().add(enchantedApple);
+            Player2.getInventory().add(enchantedApple);
+        }
         BlockPos spawn = getRandomSpawn(side);
         int count = HowMuchMobForCurrentWave(currentWave);
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
