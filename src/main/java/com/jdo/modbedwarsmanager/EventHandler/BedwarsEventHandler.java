@@ -103,6 +103,7 @@ public class BedwarsEventHandler {
         BlockPos pos = event.player.blockPosition();
         if (currentMode == Mode.NOTHING) {
             if (isInZone(pos)) {
+                LOGGER.error("Here1");
                 if (!isLicenseValid(event.player)) {
                     event.player.displayClientMessage(
                             Component.literal("Licence non activé ou invalide").withStyle(ChatFormatting.RED),
@@ -110,9 +111,13 @@ public class BedwarsEventHandler {
                     );
                     return;
                 }
+                LOGGER.error("Here2");
                 currentMode = ModBedwarsManager.Mode.SOLO;
                 Player1 = event.player;
                 Player1.heal(20);
+                LOGGER.error(String.valueOf(Player1));
+                broadcastTo((ServerPlayer) Player1, "Téléportation en cours vers l'aréne...", ChatFormatting.GREEN);
+                LOGGER.error("Here3");
                 StartSoloGame(event);
             }
         } else {

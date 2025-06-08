@@ -35,6 +35,7 @@ import java.io.File;
 import java.util.*;
 
 import static com.jdo.CustomMobsSpawnIa.command.SpawnMobCommand.spawnWave;
+import static com.mojang.text2speech.Narrator.LOGGER;
 
 
 @Mod("modbedwarsmanager")
@@ -45,6 +46,7 @@ public class ModBedwarsManager {
     public static String ARENA_STREAMUP = "arena_streamup.schem";
     public static String HOUSE = "house.schem";
 
+    //todo fix respawn
     public static Vec3 SpawnPos = new Vec3(0,209,16);
 
     public static final Set<String> STATIC_ALLOWED_BLOCKS = Set.of(
@@ -244,6 +246,22 @@ public class ModBedwarsManager {
         }
     }
 
+    public static void BedDestroyed(Player playerEliminated) {
+        if (currentMode == Mode.SOLO) {
+            currentMode = Mode.NOTHING;
+        }
+        if (currentMode == Mode.MULTI) {
+            if (playerEliminated == Player1) {
+                Winner = Player2;
+                Loser = Player1;
+            } else if (playerEliminated == Player2) {
+                Winner = Player1;
+                Loser = Player2;
+            }
+            currentMode = Mode.NOTHING;
+        }
+    }
+
     public static void BedChoice(Mode currentMode) {
 
        if (currentMode == Mode.SOLO) {
@@ -259,6 +277,9 @@ public class ModBedwarsManager {
                 BedPositionPlayer1 = getBedPos(Side.BLUE);
                 Player1Respawn = SpawnPosBlueSide;
             }
+           LOGGER.error(String.valueOf(Player1Side));
+           LOGGER.error(String.valueOf(BedPositionPlayer1));
+           LOGGER.error(String.valueOf(Player1Respawn));
        }
         if (currentMode == Mode.MULTI) {
 
@@ -288,13 +309,16 @@ public class ModBedwarsManager {
         replacingArena = false;
         BedChoice(currentMode);
         event.player.teleportTo(Player1Respawn.x, Player1Respawn.y, Player1Respawn.z);
+        LOGGER.error("Here4");
         StartGame(Server.getLevel(Level.OVERWORLD), currentMode);
     }
 
     public static void StartGame(ServerLevel level, Mode currentMode) {
-        killAllNonPlayersFromHosterWorld();
+        //killAllNonPlayersFromHosterWorld();
+        LOGGER.error("Here5");
         if (currentMode == Mode.SOLO) {
             giveStartingGear(Player1);
+            LOGGER.error("Here6");
             currentPhase = GamePhase.STARTING;
             broadcast("La partie va commencer... Utilise la touche R pour te mettre en mode attaque ! Tu verras l'animation changer...", ChatFormatting.YELLOW);
             schedule(() -> {
@@ -383,10 +407,11 @@ public class ModBedwarsManager {
     public static void startWave(ServerLevel level, BlockPos BedPosition, Side side) {
         currentWave++;
         currentPhase = GamePhase.WAVE_RUNNING;
-
+        LOGGER.error("try startWave");
         broadcast("Vague " + currentWave + " ! Commence maintenant !", ChatFormatting.GOLD);
         if (currentMode == Mode.SOLO) {
             ItemStack enchantedApple = new ItemStack(Items.ENCHANTED_GOLDEN_APPLE);
+            LOGGER.error("give gapple");
             Player1.getInventory().add(enchantedApple);
         }
         if (currentMode == Mode.MULTI) {
@@ -398,7 +423,7 @@ public class ModBedwarsManager {
         int count = HowMuchMobForCurrentWave(currentWave);
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath("minecraft", "zombie");
         spawnWave(level, id, count, BedPosition, spawn.getX(), spawn.getY(), spawn.getZ());
-
+        LOGGER.error("here7");
         schedule(() -> {
             currentPhase = GamePhase.BETWEEN_WAVES;
             broadcast("Pause entre les vagues", ChatFormatting.GRAY);
@@ -412,7 +437,7 @@ public class ModBedwarsManager {
 
     public static void spawnFireworks(ServerLevel level, List<BlockPos> positions, boolean isRed) {
         int color = isRed ? 0xFF0000 : 0x00FF00;
-
+        LOGGER.error("try spawnFireworks");
         for (BlockPos pos : positions) {
             ItemStack fireworkStack = new ItemStack(Items.FIREWORK_ROCKET);
             CompoundTag fireworksTag = new CompoundTag();
